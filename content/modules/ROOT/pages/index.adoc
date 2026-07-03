@@ -1,94 +1,101 @@
-= What is Showroom?
-:navtitle: What is Showroom?
+= Getting Started
+:navtitle: Getting Started
 
-Showroom is a web-based lab instruction platform for the https://demo.redhat.com[Red Hat Demo Platform].
-It combines rendered AsciiDoc content with embedded terminals, consoles, and interactive tools -- giving workshop and demo participants everything they need in a single browser tab.
+You've cloned the https://github.com/rhpds/showroom_template_nookbag[Showroom content template] -- a minimal starting point for authoring lab instructions on the https://demo.redhat.com[Red Hat Demo Platform].
+This template gives you a working Antora site with the Red Hat Demo Platform UI theme, ready for you to replace with your own content.
 
-== What Users See
+== Setup Checklist
 
-When a participant opens their Showroom URL they get a split-pane interface:
+Follow these steps to make the template yours:
 
-* **Left pane** -- step-by-step lab instructions rendered from an https://antora.org[Antora] site you author in AsciiDoc.
-* **Right pane** -- one or more tabs such as:
-** A web terminal (SSH to a bastion, containerised CLI tools, or both).
-** The OpenShift web console embedded in an iframe.
-** A VS Code editor (Code Server).
-** A VNC desktop (noVNC).
-** Any external URL you choose.
-
-The UI layout, tab names, and tab URLs are all controlled by a simple `ui-config.yml` file that lives in your content repository.
-
-== How It Gets Deployed
-
-This Ansible collection -- `agnosticd.showroom` -- is the primary way Showroom instances are deployed on the Red Hat Demo Platform.
-Depending on the environment type, you use one of two roles:
-
-[cols="1,3",options="header"]
+[cols="1,4",options="header"]
 |===
-|Role |Use when...
+|Step |What to do
 
-|`ocp4_workload_showroom`
-|Your lab runs on an OpenShift 4 cluster.
-The role deploys Showroom as a pod using a Helm chart, complete with content rendering, terminals, and an OpenShift `Route`.
+|1. Rename your repo
+|Suggested naming: `<lab-name>-showroom` (e.g. `ai-powered-rhel-mgmt-showroom`)
 
-|`vm_workload_showroom`
-|Your lab runs on a VM (RHEL, Fedora, etc.).
-The role deploys Showroom with rootless Podman, Traefik for TLS, and systemd for lifecycle management.
+|2. Update `content/antora.yml`
+|Change the `title` to your lab name. Update the default attribute values (`guid`, `ssh_user`, `ssh_password`, etc.) to match your environment.
+
+|3. Configure `ui-config.yml`
+|Uncomment and configure the tabs your lab needs (terminal, OCP console, external URLs). See the comments in the file for examples.
+
+|4. Write your content
+|Replace the pages in `content/modules/ROOT/pages/` with your lab modules. Update `nav.adoc` to list them.
+
+|5. Preview locally
+|Run `podman-compose up` and open http://localhost:8080. Changes auto-reload.
 |===
 
-Both roles follow the same basic flow:
+== Local Preview
 
-. Clone your Antora content repository.
-. Inject runtime variables (credentials, hostnames, GUIDs) as AsciiDoc attributes.
-. Render the content to HTML.
-. Serve the content alongside the terminal and tab services you configured.
-. Publish the final URL back to the user.
+The Antora container runs as UID 1001 and needs to modify `site.yml` at startup (to inject dev-mode extensions).
+With rootless Podman, your host files map to UID 0 inside the container, so the container cannot write to them without a permissions fix first.
 
-== Key Concepts
+Before your first run, grant the container write access:
 
-Content repository::
-A Git repo containing your AsciiDoc lab instructions, structured as an Antora component.
-You typically fork https://github.com/rhpds/showroom_template_nookbag[showroom_template_nookbag] and add your own pages.
-See xref:content-repo.adoc[].
+[source,bash]
+----
+podman unshare chown -R 1001:0 site.yml
+----
 
-AgnosticV catalog item::
-The YAML configuration in the https://github.com/rhpds/agnosticv[agnosticv] repository that ties your content repo to an environment on the Red Hat Demo Platform.
-See xref:agnosticv-config.adoc[].
+After stopping the container, reclaim ownership so you can edit the file again:
 
-User data::
-A set of key-value pairs (hostnames, passwords, URLs) written by infrastructure roles during provisioning and automatically injected into your content as Antora attributes.
-See xref:user-data.adoc[].
+[source,bash]
+----
+podman unshare chown -R 0:0 site.yml
+----
 
-UI configuration::
-A `ui-config.yml` file in your content repo that defines the tabs, layout width, and dynamic URLs shown alongside your lab instructions.
-See xref:ui-config.adoc[].
+TIP: `git checkout -- site.yml` also restores both content and ownership.
 
-== Where to Start
+[source,bash]
+----
+podman-compose up
+----
 
-[cols="1,3",options="header"]
-|===
-|Goal |Page
+Open http://localhost:8080 in your browser.
+The site rebuilds automatically whenever you save a content file -- no restart needed.
 
-|Get a Showroom lab running quickly
-|xref:quick-start.adoc[]
+== Directory Layout
 
-|Create or structure a content repo
-|xref:content-repo.adoc[]
+[source,text]
+----
+your-content-repo/
+├── content/
+│   ├── antora.yml            # Component config: title, nav, attributes
+│   └── modules/ROOT/
+│       ├── nav.adoc          # Sidebar navigation
+│       ├── pages/            # Your lab pages (AsciiDoc)
+│       └── images/           # Screenshots and diagrams (create as needed)
+├── site.yml                  # Antora playbook (do not modify)
+├── ui-config.yml             # Showroom tab layout config
+└── podman-compose.yaml       # Local dev compose
+----
 
-|Wire up an AgnosticV catalog item
-|xref:agnosticv-config.adoc[]
+== Examples
 
-|Understand the full architecture
-|xref:architecture.adoc[]
+The `examples/` directory has ready-to-use templates and reference implementations:
 
-|Contribute to Showroom itself
-|xref:contributing.adoc[]
-|===
+* **`examples/demo/`** -- Know/Show structure for presenter-led demonstrations
+* **`examples/workshop/`** -- Numbered exercises for hands-on participant labs
+* **`examples/e2e-ocp-dedicated/`** -- End-to-end example targeting a dedicated OCP cluster, with solve/validate runtime automation
+* **`examples/e2e-ocp-tenant/`** -- End-to-end example targeting an OCP tenant (shared cluster), with solve/validate runtime automation
+* **`examples/e2e-vm-rhel/`** -- End-to-end example targeting a RHEL VM, with solve/validate runtime automation
 
-== Related Projects
+Demo and Workshop each contain `templates/` (with placeholders) and `example/` (filled-in samples).
+The E2E examples include `runtime-automation/` directories with Ansible solve/validate playbooks per module.
 
-* https://github.com/agnosticd/showroom[agnosticd.showroom collection] -- this Ansible collection (you are here).
-* https://github.com/rhpds/showroom_template_nookbag[showroom_template_nookbag] -- the recommended content repo template.
-* https://github.com/rhpds/showroom-deployer[showroom-deployer] -- Helm charts that power OCP deployments.
-* https://github.com/rhpds/showroom-images[showroom-images] -- container images (content server, terminals, Antora, etc.).
-* https://github.com/rhpds/nookbag[nookbag] -- the zero-touch UI bundle.
+== Documentation
+
+For comprehensive documentation on Showroom content authoring, configuration, and deployment:
+
+* https://redhat.atlassian.net/wiki/spaces/RHPDS/pages/410091680/Showroom[Showroom Documentation] -- main docs hub
+* https://redhat.atlassian.net/wiki/spaces/RHPDS/pages/410157268[Getting Started with Showroom Content]
+* https://redhat.atlassian.net/wiki/spaces/RHPDS/pages/410091753[Antora Content Authoring Guide]
+* https://redhat.atlassian.net/wiki/spaces/RHPDS/pages/410124789[Configuring Tabs and Services]
+* https://redhat.atlassian.net/wiki/spaces/RHPDS/pages/410091775[User Variables and Substitution]
+
+== Next
+
+Head to xref:01-first-module.adoc[] to see how a lab page is structured, with working examples of terminal commands, attribute substitution, and common AsciiDoc patterns.
