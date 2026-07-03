@@ -1,7 +1,7 @@
 ---
 site:
   title: Showroom Template Demo
-  url: https://github.com/rhpds/showroom_template_nookbag
+  url: https://github.com/rhpds/showroom-template
   start_page: modules::index.adoc
 
 content:
