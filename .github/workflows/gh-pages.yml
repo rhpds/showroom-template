@@ -33,7 +33,7 @@ jobs:
       - name: setup node
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
       - name: install antora
         run: npm i -g @antora/cli@3.1.15 @antora/site-generator@3.1.15 @sntke/antora-mermaid-extension@0.0.13 @andrew-jones/antora-tabs-extension@1.0.0
       - name: antora generate
