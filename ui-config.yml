@@ -1,24 +1,21 @@
 ---
-type: showroom
-
-# Set the left column width to 30%
-default_width: 30
-# Persist the URL state so browser refresh doesn't reset the UI
-persist_url_state: true
-
-view_switcher:
-  enabled: true
-  default_mode: split
+antora:
+  name: modules
+  dir: www
+  modules:
+    - name: index
+      label: "Introduction"
+    - name: module-01
+      label: "Module 1: Your First Lab Page"
+    - name: module-02
+      label: "Module 2: Another Module"
 
 tabs:
-  # Placeholder tabs render a stub panel for local development so you
-  # can preview the layout without running real services (wetty, OCP
-  # console, etc.).  Replace with real URLs/paths before deploying.
-  #
-  # Requires nookbag-bundle v0.4.0+.
-
-  - name: ">_ terminal"
-    url: /placeholder
-
-  - name: OCP Console
+  - name: ">_ Bastion"
+    path: /wetty
+    port: 443
+    secondary_name: Worker
+    secondary_path: /terminal2
+    secondary_port: 443
+  - name: Placeholder
     url: /placeholder
