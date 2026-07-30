@@ -95,7 +95,3 @@ For comprehensive documentation on Showroom content authoring, configuration, an
 * https://redhat.atlassian.net/wiki/spaces/RHPDS/pages/410091753[Antora Content Authoring Guide]
 * https://redhat.atlassian.net/wiki/spaces/RHPDS/pages/410124789[Configuring Tabs and Services]
 * https://redhat.atlassian.net/wiki/spaces/RHPDS/pages/410091775[User Variables and Substitution]
-
-== Next
-
-Head to xref:module-01.adoc[] to see how a lab page is structured, with working examples of terminal commands, attribute substitution, and common AsciiDoc patterns.
