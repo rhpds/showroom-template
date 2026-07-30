@@ -98,4 +98,4 @@ For comprehensive documentation on Showroom content authoring, configuration, an
 
 == Next
 
-Head to xref:01-first-module.adoc[] to see how a lab page is structured, with working examples of terminal commands, attribute substitution, and common AsciiDoc patterns.
+Head to xref:module-01.adoc[] to see how a lab page is structured, with working examples of terminal commands, attribute substitution, and common AsciiDoc patterns.
