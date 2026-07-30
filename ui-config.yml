@@ -1,9 +1,7 @@
 ---
 type: showroom
 
-# Set the left column width to 30%
 default_width: 30
-# Persist the URL state so browser refresh doesn't reset the UI
 persist_url_state: true
 
 view_switcher:
@@ -11,14 +9,11 @@ view_switcher:
   default_mode: split
 
 tabs:
-  # Placeholder tabs render a stub panel for local development so you
-  # can preview the layout without running real services (wetty, OCP
-  # console, etc.).  Replace with real URLs/paths before deploying.
-  #
-  # Requires nookbag-bundle v0.4.0+.
-
-  - name: ">_ terminal"
-    url: /placeholder
-
-  - name: OCP Console
+  - name: Bastion
+    path: /wetty
+    port: 443
+    secondary_name: Worker
+    secondary_path: /terminal2
+    secondary_port: 443
+  - name: Placeholder
     url: /placeholder
