@@ -11,23 +11,14 @@ view_switcher:
   default_mode: split
 
 tabs:
-  # OCP Console
-  # - name: OCP Console
-  #   url: 'https://console-openshift-console.${DOMAIN}'
+  # Placeholder tabs render a stub panel for local development so you
+  # can preview the layout without running real services (wetty, OCP
+  # console, etc.).  Replace with real URLs/paths before deploying.
+  #
+  # Requires nookbag-bundle v0.4.0+.
 
-  # Single terminal
-  # - name: Bastion
-  #   path: /wetty
-  #   port: 443
+  - name: ">_ terminal"
+    url: /placeholder
 
-  # Vertical split terminals
-  # - name: Bastion
-  #   path: /wetty
-  #   port: 443
-  #   secondary_name: Bastion
-  #   secondary_path: /wetty
-  #   secondary_port: 443
-
-  # External page
-  - name: Antora
-    url: 'https://antora.org'
+  - name: OCP Console
+    url: /placeholder
