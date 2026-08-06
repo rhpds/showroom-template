@@ -13,6 +13,7 @@ tabs:
     url: 'https://console-openshift-console.${DOMAIN}'
   - name: Bastion ${USER}
     path: /wetty
-    port: 443
+    secondary_name: Terminal
+    secondary_path: '/terminal'
   - name: Placeholder
     url: /placeholder
