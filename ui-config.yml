@@ -10,6 +10,10 @@ antora:
     - name: module-02
       label: "Module 2: Another Module"
 
+view_switcher:
+  enabled: true
+  default_mode: split
+
 tabs:
   - name: ">_ Bastion"
     path: /wetty
